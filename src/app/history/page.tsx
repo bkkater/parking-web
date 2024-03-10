@@ -1,17 +1,24 @@
+import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+
+// Components
+import Box from "@/components/Box";
+import Card from "@/app/history/components/Card";
 
 export default function History() {
   return (
     <main className="container flex-1 px-2 py-10">
-      <div className="rounded bg-white p-4 md:p-8">
-        <div className="flex items-center gap-3">
-          <ArrowLeft className="text-cyan200" size={32} />
+      <Box>
+        <Box.Header>
+          <Box.Title>Placa XXX-999</Box.Title>
+        </Box.Header>
 
-          <h2 className="text-2xl font-semibold leading-none text-cyan200">
-            Placa XXX-999
-          </h2>
-        </div>
-      </div>
+        <Card />
+        <Card />
+        <Card />
+        <Card />
+        <Card />
+      </Box>
     </main>
   );
 }
