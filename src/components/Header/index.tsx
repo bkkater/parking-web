@@ -6,7 +6,7 @@ import LogoImg from "@/assets/logo_parking.png";
 
 export default function Header() {
   return (
-    <header className="bg-cyan200">
+    <header className="bg-cyan200 shadow-sm">
       <div className="container flex h-16 items-center justify-between px-2">
         <Image
           src={LogoImg}
