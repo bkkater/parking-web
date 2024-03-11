@@ -4,15 +4,15 @@ import * as TabsUI from "@radix-ui/react-tabs";
 import Content from "@/components/Tabs/TabsContent";
 import Trigger from "@/components/Tabs/TabsTrigger";
 
-interface TabsComponentProps extends TabsUI.TabsProps {
+type TabsComponentProps = {
   children: React.ReactNode;
-}
+} & TabsUI.TabsProps;
 
 export default function Tabs({ children, ...rest }: TabsComponentProps) {
   return (
     <TabsUI.Root
       defaultValue="entry"
-      className="h-full w-full max-w-2xl"
+      className="mx-auto h-full w-full max-w-2xl"
       {...rest}
     >
       {children}
