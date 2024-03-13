@@ -12,7 +12,7 @@ export default function Tabs({ children, ...rest }: TabsComponentProps) {
   return (
     <TabsUI.Root
       defaultValue="entry"
-      className="mx-auto h-full w-full max-w-2xl"
+      className="mx-auto h-full w-full max-w-2xl animate-fromTop"
       {...rest}
     >
       {children}

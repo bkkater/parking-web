@@ -8,7 +8,7 @@ type BoxProps = {
 
 export default function Box({ children }: BoxProps) {
   return (
-    <div className="grid gap-4 rounded bg-white p-4 md:grid-cols-2 md:p-8">
+    <div className="grid min-h-48 animate-fromTop gap-4 rounded bg-white p-4 shadow md:grid-cols-2 md:p-8">
       {children}
     </div>
   );
