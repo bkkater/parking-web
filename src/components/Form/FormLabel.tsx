@@ -1,8 +1,8 @@
 import { LabelHTMLAttributes } from "react";
 
-interface FormLabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
+type FormLabelProps = LabelHTMLAttributes<HTMLLabelElement> & {
   children: React.ReactNode | string;
-}
+};
 
 export default function Label({ children, ...rest }: FormLabelProps) {
   return (

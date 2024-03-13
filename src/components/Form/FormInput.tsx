@@ -1,10 +1,33 @@
-import { InputHTMLAttributes as InputProps } from "react";
+"use client";
 
-export default function Input({ ...rest }: InputProps<HTMLInputElement>) {
-  return (
-    <input
-      className="bg-yellow100 border-gray200 h-14 border text-center text-2xl uppercase outline-none"
-      {...rest}
-    />
-  );
-}
+import { InputHTMLAttributes, forwardRef } from "react";
+
+type InputProps = InputHTMLAttributes<HTMLInputElement> & {
+  uppercaseInput?: boolean;
+  error?: string | undefined;
+};
+
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type, uppercaseInput, error, ...rest }, ref) => {
+    function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
+      if (uppercaseInput) {
+        e.currentTarget.value = e.currentTarget.value.toUpperCase();
+      }
+    }
+
+    return (
+      <input
+        className="data-[error=true]:text-pink200 h-16 border border-gray200 bg-yellow100 text-center text-2xl outline-none data-[error=true]:text-pink700"
+        autoComplete="off"
+        data-error={!!error}
+        onInput={handleInput}
+        ref={ref}
+        {...rest}
+      />
+    );
+  },
+);
+
+Input.displayName = "Input";
+
+export default Input;
