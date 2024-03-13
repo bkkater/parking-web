@@ -29,7 +29,15 @@ const config: Config = {
       orange400: "#F1B147",
 
       /* Violet */
+      violet400: "#c87ed5",
       violet500: "#A769B2",
+
+      /* Pink */
+      pink100: "#FFD7DE",
+      pink700: "#FF0068",
+
+      /* Red */
+      red700: "#FF1744",
 
       /* Green */
       green100: "#35E4BD",
