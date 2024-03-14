@@ -24,6 +24,7 @@ const config: Config = {
 
       /* Cyan */
       cyan200: "#4DD0E1",
+      cyan300: "#42b1bf",
 
       /* Orange */
       orange400: "#F1B147",
@@ -61,10 +62,10 @@ const config: Config = {
             transform: "translateY(0)",
           },
         },
-        fromLeft: {
+        fromRight: {
           from: {
             opacity: "0",
-            transform: "translateX(-30px)",
+            transform: "translateX(40px)",
           },
           to: {
             opacity: "1",
@@ -83,7 +84,7 @@ const config: Config = {
       animation: {
         spin: "spin 2.5s linear infinite",
         fromTop: "fromTop 0.5s ease-out",
-        fromLeft: "fromLeft 0.5s ease-out",
+        fromRight: "fromRight 0.5s ease-out",
         fadeIn: "fadeIn 0.5s ease-out",
       },
     },
