@@ -60,7 +60,7 @@ export const HomeProvider = ({ children }: HomeProviderProps) => {
 
     const { plate } = data;
 
-    const response = await api(`/${plate}/payment`, {
+    const response = await api(`/${plate}/pay`, {
       method: "POST",
       cache: "no-store",
     });
@@ -68,7 +68,7 @@ export const HomeProvider = ({ children }: HomeProviderProps) => {
     if (!response.ok) {
       setError((prevState) => ({
         ...prevState,
-        exit: "Erro ao registrar saída",
+        exit: "Erro ao registrar pagamento",
       }));
     }
   };
