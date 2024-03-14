@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<p align="center">
+   <img src=".github/mockup.png" />
+</p>
 
-## Getting Started
+<br />
 
-First, run the development server:
+<p align="center">	
+  
+  <img alt="Repository size" src="https://img.shields.io/github/repo-size/bkkater/parking-web?color=6CBAD9&style=for-the-badge">
 
+  <a href="https://github.com/bkkater/parking-web/commits/master">
+    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/bkkater/parking-web?color=6CBAD9&style=for-the-badge">
+  </a> 
+  
+  <img alt="License" src="https://img.shields.io/badge/license-MIT-6CBAD9?style=for-the-badge">
+</p>
+
+<br />
+<br />
+
+
+# :pushpin: Tabela de Conteúdo
+
+* [Propósito do projeto](#closed_book-propósito-do-projeto)
+* [Tecnologias](#computer-tecnologias)
+* [Como rodar](#construction_worker-como-rodar)
+
+# :closed_book: Propósito do projeto
+
+Este projeto foi desenvolvido como parte de um desafio de programação, com o objetivo de criar uma aplicação web para gerenciamento de um estacionamento. 
+
+A ideia era utilizar as tecnologias Next.js 14, React 18 e explorar as funcionalidades do Tailwind CSS. O projeto serviu como um desafio pessoal para aprimorar habilidades de desenvolvimento web e explorar novas tecnologias.
+
+# :computer: Tecnologias
+
+Esse projeto foi feito utilizando as seguintes tecnologias:
+<details>
+  <summary>Front-end</summary>
+
+-   [React](https://pt-br.reactjs.org/)
+-   [Next.js](https://nextjs.org/)
+-   [Tailwind CSS](https://tailwindcss.com/)
+-   [Radix-UI](https://www.radix-ui.com/)
+-   [React Hook Form](https://react-hook-form.com/)
+-   [Lucide](https://lucide.netlify.app/)
+</details>
+
+
+# :rocket: Funcionalidades
+
+- **Registro de Entrada, Saída de Veículos e Pagamento**: O usuários pode registrar a entrada e saída de veículos, fornecendo sua placa.
+- **Histórico do Veículo**: O usuário pode acessar o registro completo do histórico de entrada e saída do veículo, informações sobre o tempo total e pagamento.
+
+
+# :construction_worker: Como rodar
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Clone o Repositório
+$ git clone https://github.com/bkkater/parking-web.git
+# Vá para a pasta parking-web
+$ cd parking-web
+# Instale as depedencias
+$ npm install
+# Rode a aplicação
+$ npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+:closed_book: LICENSE
+Esse projeto está sobre MIT license.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
