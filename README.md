@@ -22,7 +22,7 @@
 # :pushpin: Tabela de Conteúdo
 
 * [Propósito do projeto](#closed_book-propósito-do-projeto)
-* [Tecnologias](#computer-tecnologias)
+* [O que utilizei](#computer-o-que-utilizei)
 * [Como rodar](#construction_worker-como-rodar)
 
 # :closed_book: Propósito do projeto
@@ -31,11 +31,7 @@ Este projeto foi desenvolvido como parte de um desafio de programação, com o o
 
 A ideia era utilizar as tecnologias Next.js 14, React 18 e explorar as funcionalidades do Tailwind CSS. O projeto serviu como um desafio pessoal para aprimorar habilidades de desenvolvimento web e explorar novas tecnologias.
 
-# :computer: Tecnologias
-
-Esse projeto foi feito utilizando as seguintes tecnologias:
-<details>
-  <summary>Front-end</summary>
+# :computer: O que utilizei
 
 -   [React](https://pt-br.reactjs.org/)
 -   [Next.js](https://nextjs.org/)
@@ -43,14 +39,12 @@ Esse projeto foi feito utilizando as seguintes tecnologias:
 -   [Radix-UI](https://www.radix-ui.com/)
 -   [React Hook Form](https://react-hook-form.com/)
 -   [Lucide](https://lucide.netlify.app/)
-</details>
 
 
 # :rocket: Funcionalidades
 
 - **Registro de Entrada, Saída de Veículos e Pagamento**: O usuários pode registrar a entrada e saída de veículos, fornecendo sua placa.
 - **Histórico do Veículo**: O usuário pode acessar o registro completo do histórico de entrada e saída do veículo, informações sobre o tempo total e pagamento.
-
 
 # :construction_worker: Como rodar
 ```bash
