@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -14,21 +14,20 @@ import Error from "@/components/Error";
 // Utils
 import { carSchema } from "@/utils/schema/car";
 
-export type EntryFormSchema = z.infer<typeof carSchema>;
+// Contexts
+import { FormSchema, useHomeContext } from "@/contexts/homeContext";
 
-type EntryFormProps = {
-  onSubmitEntry: (data: EntryFormSchema) => void;
-  verifyPlateStatus: (data: EntryFormSchema) => any;
-};
+const EntryForm = () => {
+  const { getLastRecord, onSubmitEntry, error } = useHomeContext();
 
-const EntryForm = ({ onSubmitEntry, verifyPlateStatus }: EntryFormProps) => {
   const {
     register,
     handleSubmit,
     watch,
     setError,
-    formState: { errors, isSubmitSuccessful, isSubmitting },
-  } = useForm<EntryFormSchema>({
+
+    formState: { errors: formErrors, isSubmitSuccessful, isSubmitting },
+  } = useForm<FormSchema>({
     resolver: zodResolver(carSchema),
   });
 
@@ -36,34 +35,37 @@ const EntryForm = ({ onSubmitEntry, verifyPlateStatus }: EntryFormProps) => {
    * Submit da entrada do veículo.
    */
   const handleSubmitEntry = useCallback(
-    async (data: EntryFormSchema) => {
-      const { plate } = data;
-
-      const { data: lastRegisterData, error } = await verifyPlateStatus({
-        plate,
-      });
+    async (data: FormSchema) => {
+      const { lastRecord, error: lastRecordError } = await getLastRecord(data);
 
       /**
-       * Em caso de erro na requisição ou se o veículo já estiver estacionado, exibe mensagem de erro.
+       * Se houver erro no registro anterior, ou se o veículo já estiver estacionado, exibe mensagem de erro.
        */
-      if (
-        error ||
-        (lastRegisterData && (!lastRegisterData.paid || !lastRegisterData.left))
-      ) {
-        setError("plate", { message: error || "Veículo já estacionado" });
+      if (lastRecordError || (lastRecord && !lastRecord.left)) {
+        setError("plate", {
+          message: lastRecordError || "Veículo já estacionado",
+        });
 
         return;
       }
 
-      onSubmitEntry({ plate });
+      onSubmitEntry(data);
     },
-    [onSubmitEntry, setError, verifyPlateStatus],
+    [getLastRecord, onSubmitEntry, setError],
   );
+
+  useEffect(() => {
+    if (error.entry) {
+      setError("plate", {
+        message: error.entry,
+      });
+    }
+  }, [error.entry, setError]);
 
   return (
     <Form onSubmit={handleSubmit(handleSubmitEntry)}>
       <Form.State
-        isSubmitSuccessful={isSubmitSuccessful}
+        isSubmitSuccessful={isSubmitSuccessful && !formErrors}
         isLoading={isSubmitting}
         submittedText="Registrado!"
         loadingText="Registrando..."
@@ -76,11 +78,11 @@ const EntryForm = ({ onSubmitEntry, verifyPlateStatus }: EntryFormProps) => {
             type="text"
             placeholder="AAA-0000"
             uppercaseInput
-            error={errors.plate?.message}
+            error={formErrors.plate?.message}
             {...register("plate")}
           />
 
-          {errors.plate && <Error text={errors.plate.message} />}
+          {formErrors.plate && <Error text={formErrors.plate.message} />}
         </Form.Field>
 
         <Button type="submit" disabled={!watch("plate") || isSubmitting}>

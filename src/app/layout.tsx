@@ -1,8 +1,10 @@
+import { Suspense } from "react";
 import { Viewport, Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 
 // Components
 import Header from "@/components/Header";
+import Notification from "@/components/Notification";
 
 // Styles
 import "@/styles/globals.css";
@@ -31,7 +33,11 @@ export default function RootLayout({
         <Header />
 
         <main className="container flex flex-1 flex-col px-2 py-10">
-          {children}
+          <Suspense
+            fallback={<Notification text="Carregando" type="loading" />}
+          >
+            {children}
+          </Suspense>
         </main>
       </body>
     </html>
