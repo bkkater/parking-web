@@ -28,45 +28,36 @@ type HistoryResponseProps = {
  * Fetch do histórico de registro de uma placa.
  */
 async function getHistory(plate: string): Promise<HistoryResponseProps> {
-  try {
-    const validationResult = carSchema.safeParse({ plate });
+  const validationResult = carSchema.safeParse({ plate });
 
-    /**
-     * Em caso de erro na validação, retorna mensagem de erro.
-     */
-    if (!validationResult.success) {
-      return {
-        data: null,
-        error: validationResult.error.errors[0].message,
-      };
-    }
-
-    const response = await api(`/${plate}`, {
-      method: "GET",
-      cache: "no-store",
-    });
-
-    /**
-     * Em caso de erro na requisição, retorna mensagem genérica de erro.
-     */
-    if (!response.ok) {
-      return {
-        data: null,
-        error: "Erro ao carregar os dados da API",
-      };
-    }
-
-    const data = await response.json();
-
-    console.log(data);
-
-    return { data, error: null };
-  } catch (error) {
+  /**
+   * Em caso de erro na validação, retorna mensagem de erro.
+   */
+  if (!validationResult.success) {
     return {
       data: null,
-      error: "Oops, algo deu errado",
+      error: validationResult.error.errors[0].message,
     };
   }
+
+  const response = await api(`/${plate}`, {
+    method: "GET",
+    cache: "no-store",
+  });
+
+  /**
+   * Em caso de erro na requisição, retorna mensagem genérica de erro.
+   */
+  if (!response.ok) {
+    return {
+      data: null,
+      error: "Erro ao carregar os dados da API",
+    };
+  }
+
+  const data = await response.json();
+
+  return { data, error: null };
 }
 
 export default async function History({ params }: HistoryDetailProps) {
