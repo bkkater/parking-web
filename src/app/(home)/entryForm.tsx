@@ -18,30 +18,46 @@ export type EntryFormSchema = z.infer<typeof carSchema>;
 
 type EntryFormProps = {
   onSubmitEntry: (data: EntryFormSchema) => void;
+  verifyPlateStatus: (data: EntryFormSchema) => any;
 };
 
-const EntryForm = ({ onSubmitEntry }: EntryFormProps) => {
+const EntryForm = ({ onSubmitEntry, verifyPlateStatus }: EntryFormProps) => {
   const {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitSuccessful, isSubmitting, isLoading },
+    setError,
+    formState: { errors, isSubmitSuccessful, isSubmitting },
   } = useForm<EntryFormSchema>({
     resolver: zodResolver(carSchema),
   });
 
+  /**
+   * Submit da entrada do veículo.
+   */
   const handleSubmitEntry = useCallback(
     async (data: EntryFormSchema) => {
-      /**
-       * Simula um delay na requisição para mostrar o loading.
-       */
-      await new Promise((resolve) => {
-        setTimeout(resolve, 2000);
+      const { plate } = data;
+
+      const { data: lastRegisterData, error } = await verifyPlateStatus({
+        plate,
       });
 
-      onSubmitEntry(data);
+      /**
+       * Em caso de erro na requisição ou se o veículo já estiver estacionado, exibe mensagem de erro.
+       */
+      if (
+        error ||
+        (lastRegisterData && (!lastRegisterData.paid || !lastRegisterData.left))
+      ) {
+        setError("plate", { message: error || "Veículo já estacionado" });
+
+        return;
+      }
+
+      onSubmitEntry({ plate });
     },
-    [onSubmitEntry],
+    [onSubmitEntry, setError, verifyPlateStatus],
   );
 
   return (
@@ -49,6 +65,8 @@ const EntryForm = ({ onSubmitEntry }: EntryFormProps) => {
       <Form.State
         isSubmitSuccessful={isSubmitSuccessful}
         isLoading={isSubmitting}
+        submittedText="Registrado!"
+        loadingText="Registrando..."
       >
         <Form.Field>
           <Form.Label htmlFor="plate">Numero da placa:</Form.Label>
@@ -65,7 +83,7 @@ const EntryForm = ({ onSubmitEntry }: EntryFormProps) => {
           {errors.plate && <Error text={errors.plate.message} />}
         </Form.Field>
 
-        <Button type="submit" disabled={!watch("plate")}>
+        <Button type="submit" disabled={!watch("plate") || isSubmitting}>
           Confirmar entrada
         </Button>
       </Form.State>

@@ -1,16 +1,17 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 import Link from "next/link";
 
 // Components
-import Button from "@/components/Button";
 import Form from "@/components/Form";
 import Error from "@/components/Error";
+import PaymentAlert from "@/app/(home)/paymentAlert";
+import ExitAlert from "@/app/(home)/exitAlert";
 
 // Utils
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 // Utils
@@ -21,96 +22,123 @@ export type ExitFormSchema = z.infer<typeof carSchema>;
 type EntryFormProps = {
   onSubmitPayment: (data: ExitFormSchema) => void;
   onSubmitExit: (data: ExitFormSchema) => void;
+  verifyPlateStatus: (data: ExitFormSchema) => any;
 };
 
-const ExitForm = ({ onSubmitPayment, onSubmitExit }: EntryFormProps) => {
+const ExitForm = ({
+  onSubmitPayment,
+  onSubmitExit,
+  verifyPlateStatus,
+}: EntryFormProps) => {
+  const [showPaymentAlert, setShowPaymentAlert] = useState(false);
+  const [showExitAlert, setShowExitAlert] = useState(false);
+
   const {
     register,
     handleSubmit,
     watch,
     getValues,
-    formState: { errors, isSubmitSuccessful, isSubmitting, isValid },
+    setError,
+    formState: { errors, isValid, isSubmitting },
   } = useForm<ExitFormSchema>({
     resolver: zodResolver(carSchema),
   });
 
+  /**
+   * Fecha o modal em caso de erro ou sucesso na requisição.
+   */
+  const handleCloseModal = useCallback(() => {
+    setShowPaymentAlert(false);
+    setShowExitAlert(false);
+  }, []);
+
+  /**
+   * Submit do pagamento do veículo.
+   */
   const handleSubmitPayment = useCallback(
     async (data: ExitFormSchema) => {
-      /**
-       * Simula um delay na requisição para exibir o loading.
-       */
-      await new Promise((resolve) => {
-        setTimeout(resolve, 2000);
-      });
+      const { plate } = data;
 
-      onSubmitPayment(data);
+      const { data: historyData, error } = await verifyPlateStatus({ plate });
+
+      if (error || !historyData || (historyData.paid && !historyData.left)) {
+        setError("plate", {
+          message: error || "Veículo já realizou o pagamento",
+        });
+      } else {
+        onSubmitPayment({ plate });
+      }
+
+      handleCloseModal();
     },
-    [onSubmitPayment],
+    [handleCloseModal, onSubmitPayment, setError, verifyPlateStatus],
   );
 
+  /**
+   * Submit da saída do veículo.
+   */
   const handleSubmitExit = useCallback(
     async (data: ExitFormSchema) => {
-      /**
-       * Simula um delay na requisição para exibir o loading.
-       */
-      await new Promise((resolve) => {
-        setTimeout(resolve, 2000);
-      });
+      const { plate } = data;
 
-      onSubmitExit(data);
+      const { data: historyData, error } = await verifyPlateStatus({ plate });
+
+      if (error || !historyData || !historyData.paid) {
+        setError("plate", {
+          message: error || "Veículo não realizou o pagamento",
+        });
+      } else {
+        onSubmitExit({ plate });
+      }
+
+      handleCloseModal();
     },
-    [onSubmitExit],
+    [handleCloseModal, onSubmitExit, setError, verifyPlateStatus],
   );
 
   return (
     <Form>
-      <Form.State
-        isSubmitSuccessful={isSubmitSuccessful}
-        isLoading={isSubmitting}
+      <Form.Field>
+        <Form.Label htmlFor="plate">Numero da placa:</Form.Label>
+
+        <Form.Input
+          id="plate"
+          type="text"
+          placeholder="AAA-0000"
+          error={errors.plate?.message}
+          uppercaseInput
+          {...register("plate")}
+        />
+
+        {errors.plate && <Error text={errors.plate.message} />}
+      </Form.Field>
+
+      <PaymentAlert
+        disableTrigger={!watch("plate") || isSubmitting}
+        onSubmit={handleSubmit(handleSubmitPayment, handleCloseModal)}
+        open={showPaymentAlert}
+        onOpenChange={setShowPaymentAlert}
       >
-        <Form.Field>
-          <Form.Label htmlFor="plate">Numero da placa:</Form.Label>
+        <span className="mb-3 text-4xl text-cyan200">{watch("plate")}</span>
+      </PaymentAlert>
 
-          <Form.Input
-            id="plate"
-            type="text"
-            placeholder="AAA-0000"
-            error={errors.plate?.message}
-            uppercaseInput
-            {...register("plate")}
-          />
+      <ExitAlert
+        disableTrigger={!watch("plate") || isSubmitting}
+        onSubmit={handleSubmit(handleSubmitExit, handleCloseModal)}
+        open={showExitAlert}
+        onOpenChange={setShowExitAlert}
+      >
+        <span className="mb-3 text-4xl text-cyan200">{watch("plate")}</span>
+      </ExitAlert>
 
-          {errors.plate && <Error text={errors.plate.message} />}
-        </Form.Field>
-
-        <Button
-          color="secoundary"
-          type="button"
-          onClick={handleSubmit(handleSubmitPayment)}
-          disabled={!watch("plate")}
+      {isValid && (
+        <Link
+          href={`/history/${getValues("plate")}`}
+          className="mx-auto mt-3 font-semibold uppercase text-cyan200 transition-colors hover:text-cyan300"
         >
-          Pagamento
-        </Button>
-
-        <Button
-          color="secoundary"
-          variant="outlined"
-          type="button"
-          onClick={handleSubmit(handleSubmitExit)}
-          disabled={!watch("plate")}
-        >
-          Saída
-        </Button>
-
-        {isValid && (
-          <Link
-            href={`/history/${getValues("plate")}`}
-            className="mx-auto mt-3 font-semibold uppercase text-cyan200"
-          >
-            Ver histórico
-          </Link>
-        )}
-      </Form.State>
+          Ver histórico
+        </Link>
+      )}
     </Form>
   );
 };
