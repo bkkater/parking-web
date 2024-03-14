@@ -1,4 +1,4 @@
 /**
  * Regex para validação de placas brasileiras.
  */
-export const plateRegex = /[A-Z]{3}[-][0-9]{4}/;
+export const plateRegex = /[A-Za-z]{3}-[0-9]{4}/;

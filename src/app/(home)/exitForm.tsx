@@ -61,13 +61,27 @@ const ExitForm = () => {
       const { lastRecord, error: lastRecordError } = await getLastRecord(data);
 
       /**
-       * Se houver erro no registro anterior, ou se o veículo já realizou o pagamento, exibe mensagem de erro.
+       * Se ocorreu algum erro ao pegar dados do veículo, exibe mensagem de erro.
        */
-      if (
-        lastRecordError ||
-        !lastRecord ||
-        (lastRecord.paid && !lastRecord.left)
-      ) {
+      if (lastRecordError) {
+        setError("plate", {
+          message: lastRecordError,
+        });
+      }
+
+      /**
+       * Se o veículo não possui registro, exibe mensagem de erro.
+       */
+      if ((lastRecord && lastRecord.left) || !lastRecord) {
+        setError("plate", {
+          message: "Veículo não tem registro aberto",
+        });
+      }
+
+      /**
+       * Se o veículo já realizou o pagamento, exibe mensagem de erro.
+       */
+      if (lastRecord.paid && !lastRecord.left) {
         setError("plate", {
           message: lastRecordError || "Veículo já realizou o pagamento",
         });
@@ -99,7 +113,7 @@ const ExitForm = () => {
       /**
        * Se o veículo não possui registro, exibe mensagem de erro.
        */
-      if ((lastRecord && !lastRecord.paid) || !lastRecord) {
+      if ((lastRecord && lastRecord.left) || !lastRecord) {
         setError("plate", {
           message: "Veículo não tem registro aberto",
         });

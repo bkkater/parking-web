@@ -73,7 +73,10 @@ export default async function History({ params }: HistoryDetailProps) {
         <Suspense
           fallback={<Notification type="loading" text="Carregando..." />}
         >
-          {data?.map((item) => <Card item={item} key={item.reservation} />)}
+          {!data?.length && <Error text="Nenhum registro encontrado" />}
+
+          {!!data?.length &&
+            data.map((item) => <Card item={item} key={item.reservation} />)}
         </Suspense>
 
         {error && <Error text={error} />}
