@@ -1,6 +1,7 @@
-import { z } from "zod";
+import { Suspense } from "react";
 
 // Components
+import Notification from "@/components/Notification";
 import EntryForm, { EntryFormSchema } from "@/app/(home)/entryForm";
 import ExitForm, { ExitFormSchema } from "@/app/(home)/exitForm";
 import HomeTabs from "@/app/(home)/tabs";
@@ -16,7 +17,7 @@ export default function Home() {
   async function handleSubmitEntry(data: EntryFormSchema) {
     "use server";
 
-    const response = await api("/", {
+    await api("/", {
       method: "POST",
       body: JSON.stringify(data),
       cache: "no-store",
@@ -74,21 +75,23 @@ export default function Home() {
   }
 
   return (
-    <HomeTabs>
-      <HomeTab value="entry">
-        <EntryForm
-          onSubmitEntry={handleSubmitEntry}
-          verifyPlateStatus={verifyPlateStatus}
-        />
-      </HomeTab>
+    <Suspense fallback={<Notification text="Carregando" type="loading" />}>
+      <HomeTabs>
+        <HomeTab value="entry">
+          <EntryForm
+            onSubmitEntry={handleSubmitEntry}
+            verifyPlateStatus={verifyPlateStatus}
+          />
+        </HomeTab>
 
-      <HomeTab value="exit">
-        <ExitForm
-          onSubmitPayment={handleSubmitPaymennt}
-          onSubmitExit={handleSubmitExit}
-          verifyPlateStatus={verifyPlateStatus}
-        />
-      </HomeTab>
-    </HomeTabs>
+        <HomeTab value="exit">
+          <ExitForm
+            onSubmitPayment={handleSubmitPaymennt}
+            onSubmitExit={handleSubmitExit}
+            verifyPlateStatus={verifyPlateStatus}
+          />
+        </HomeTab>
+      </HomeTabs>
+    </Suspense>
   );
 }
