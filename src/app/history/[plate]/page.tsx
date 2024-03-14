@@ -24,13 +24,17 @@ type HistoryResponseProps = {
   error: string | null;
 };
 
+/**
+ * Fetch do histórico de registro de uma placa.
+ */
 async function getHistory(plate: string): Promise<HistoryResponseProps> {
   try {
     const validationResult = carSchema.safeParse({ plate });
 
+    /**
+     * Em caso de erro na validação, retorna mensagem de erro.
+     */
     if (!validationResult.success) {
-      console.log("caiu no log de validação");
-
       return {
         data: null,
         error: validationResult.error.errors[0].message,
@@ -39,11 +43,13 @@ async function getHistory(plate: string): Promise<HistoryResponseProps> {
 
     const response = await api(`/${plate}`, {
       method: "GET",
+      cache: "no-store",
     });
 
+    /**
+     * Em caso de erro na requisição, retorna mensagem genérica de erro.
+     */
     if (!response.ok) {
-      console.log("caiu no log da api");
-
       return {
         data: null,
         error: "Erro ao carregar os dados da API",
@@ -52,10 +58,10 @@ async function getHistory(plate: string): Promise<HistoryResponseProps> {
 
     const data = await response.json();
 
+    console.log(data);
+
     return { data, error: null };
   } catch (error) {
-    console.log("caiu no log do catch");
-
     return {
       data: null,
       error: "Oops, algo deu errado",
