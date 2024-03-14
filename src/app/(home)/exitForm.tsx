@@ -18,16 +18,30 @@ import { carSchema, errorMessage } from "@/utils/schema/car";
 
 // Contexts
 import { FormSchema, useHomeContext } from "@/contexts/homeContext";
-import Notification from "@/components/Notification";
 
 const ExitForm = () => {
   const router = useRouter();
   const { getLastRecord, onSubmitPayment, onSubmitExit, error } =
     useHomeContext();
 
-  const [loadingHistory, setLoadingHistory] = useState(false);
   const [showPaymentAlert, setShowPaymentAlert] = useState(false);
   const [showExitAlert, setShowExitAlert] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    getValues,
+    setError,
+    formState: {
+      errors: formErrors,
+      isSubmitting,
+      isSubmitSuccessful,
+      isLoading,
+    },
+  } = useForm<FormSchema>({
+    resolver: zodResolver(carSchema),
+  });
 
   /**
    * Fecha modais de pagamento e saída.
@@ -37,22 +51,13 @@ const ExitForm = () => {
     setShowExitAlert(false);
   }, []);
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    getValues,
-    setError,
-    formState: { errors: formErrors, isSubmitting },
-  } = useForm<FormSchema>({
-    resolver: zodResolver(carSchema),
-  });
-
   /**
    * Submit do pagamento do veículo.
    */
   const handleSubmitPayment = useCallback(
     async (data: FormSchema) => {
+      handleModalsClose();
+
       const { lastRecord, error: lastRecordError } = await getLastRecord(data);
 
       /**
@@ -69,8 +74,6 @@ const ExitForm = () => {
       } else {
         onSubmitPayment(data);
       }
-
-      handleModalsClose();
     },
     [getLastRecord, handleModalsClose, onSubmitPayment, setError],
   );
@@ -80,20 +83,38 @@ const ExitForm = () => {
    */
   const handleSubmitExit = useCallback(
     async (data: FormSchema) => {
+      handleModalsClose();
+
       const { lastRecord, error: lastRecordError } = await getLastRecord(data);
 
       /**
-       * Se houver erro no registro anterior, ou se o veículo não realizou o pagamento, exibe mensagem de erro.
+       * Se ocorreu algum erro ao pegar dados do veículo, exibe mensagem de erro.
        */
-      if (lastRecordError || !lastRecord || !lastRecord.paid) {
+      if (lastRecordError) {
         setError("plate", {
-          message: lastRecordError || "Veículo não realizou o pagamento",
+          message: lastRecordError,
+        });
+      }
+
+      /**
+       * Se o veículo não possui registro, exibe mensagem de erro.
+       */
+      if ((lastRecord && !lastRecord.paid) || !lastRecord) {
+        setError("plate", {
+          message: "Veículo não tem registro aberto",
+        });
+      }
+
+      /**
+       * Se o veículo não realizou o pagamento, exibe mensagem de erro.
+       */
+      if (lastRecord && !lastRecord.paid) {
+        setError("plate", {
+          message: "Veículo não realizou o pagamento",
         });
       } else {
         onSubmitExit(data);
       }
-
-      handleModalsClose();
     },
     [getLastRecord, handleModalsClose, onSubmitExit, setError],
   );
@@ -121,47 +142,54 @@ const ExitForm = () => {
 
   return (
     <Form>
-      <Form.Field>
-        <Form.Label htmlFor="plate">Numero da placa:</Form.Label>
-
-        <Form.Input
-          id="plate"
-          type="text"
-          placeholder="AAA-0000"
-          error={formErrors.plate?.message}
-          uppercaseInput
-          {...register("plate")}
-        />
-
-        {formErrors.plate && <Error text={formErrors.plate.message} />}
-      </Form.Field>
-
-      <PaymentAlert
-        open={showPaymentAlert}
-        onOpenChange={setShowPaymentAlert}
-        disableTrigger={!watch("plate") || isSubmitting}
-        onSubmit={handleSubmit(handleSubmitPayment, handleModalsClose)}
+      <Form.State
+        submittedText="Registrado!"
+        loadingText="Carregando..."
+        isLoading={isLoading}
+        isSubmitSuccessful={isSubmitSuccessful && !error}
       >
-        <span className="mb-3 text-4xl text-cyan200">{watch("plate")}</span>
-      </PaymentAlert>
+        <Form.Field>
+          <Form.Label htmlFor="plate">Numero da placa:</Form.Label>
 
-      <ExitAlert
-        open={showExitAlert}
-        onOpenChange={setShowExitAlert}
-        disableTrigger={!watch("plate") || isSubmitting}
-        onSubmit={handleSubmit(handleSubmitExit, handleModalsClose)}
-      >
-        <span className="mb-3 text-4xl text-cyan200">{watch("plate")}</span>
-      </ExitAlert>
+          <Form.Input
+            id="plate"
+            type="text"
+            placeholder="AAA-0000"
+            error={formErrors.plate?.message}
+            uppercaseInput
+            {...register("plate")}
+          />
 
-      <button
-        type="button"
-        onClick={handleHistoryClick}
-        className="mx-auto mt-3 font-semibold uppercase text-cyan200 transition-colors hover:text-cyan300 disabled:text-gray700"
-        disabled={!watch("plate") || isSubmitting}
-      >
-        Ver histórico
-      </button>
+          {formErrors.plate && <Error text={formErrors.plate.message} />}
+        </Form.Field>
+
+        <PaymentAlert
+          open={showPaymentAlert}
+          onOpenChange={setShowPaymentAlert}
+          disableTrigger={!watch("plate") || isSubmitting}
+          onSubmit={handleSubmit(handleSubmitPayment, handleModalsClose)}
+        >
+          <span className="mb-3 text-4xl text-cyan200">{watch("plate")}</span>
+        </PaymentAlert>
+
+        <ExitAlert
+          open={showExitAlert}
+          onOpenChange={setShowExitAlert}
+          disableTrigger={!watch("plate") || isSubmitting}
+          onSubmit={handleSubmit(handleSubmitExit, handleModalsClose)}
+        >
+          <span className="mb-3 text-4xl text-cyan200">{watch("plate")}</span>
+        </ExitAlert>
+
+        <button
+          type="button"
+          onClick={handleHistoryClick}
+          className="mx-auto mt-3 font-semibold uppercase text-cyan200 transition-colors hover:text-cyan300 disabled:text-gray700"
+          disabled={!watch("plate") || isSubmitting}
+        >
+          Ver histórico
+        </button>
+      </Form.State>
     </Form>
   );
 };
