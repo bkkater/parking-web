@@ -1,3 +1,4 @@
+import { Viewport, Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 
 // Components
@@ -11,8 +12,12 @@ const openSans = Open_Sans({
   variable: "--font-opensans",
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Parking App",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#F2F2F2",
 };
 
 export default function RootLayout({
