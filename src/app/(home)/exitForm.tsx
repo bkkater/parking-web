@@ -18,12 +18,14 @@ import { carSchema, errorMessage } from "@/utils/schema/car";
 
 // Contexts
 import { FormSchema, useHomeContext } from "@/contexts/homeContext";
+import Notification from "@/components/Notification";
 
 const ExitForm = () => {
   const router = useRouter();
   const { getLastRecord, onSubmitPayment, onSubmitExit, error } =
     useHomeContext();
 
+  const [loadingHistory, setLoadingHistory] = useState(false);
   const [showPaymentAlert, setShowPaymentAlert] = useState(false);
   const [showExitAlert, setShowExitAlert] = useState(false);
 
