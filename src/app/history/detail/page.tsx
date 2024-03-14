@@ -7,10 +7,11 @@ import { useRouter } from "next/navigation";
 import Box from "@/components/Box";
 import Notification from "@/components/Notification";
 import Error from "@/components/Error";
+import Label from "@/app/history/label";
+import Value from "@/app/history/value";
 
 // Data
 import { parkingHistory } from "@/data/type/parkingHistory";
-import Link from "next/link";
 
 export default function ReservationDetail() {
   const router = useRouter();
@@ -33,25 +34,23 @@ export default function ReservationDetail() {
   return (
     <>
       <Box>
-        <Box.Header>
-          {data?.reservation && <Box.Title>{data?.reservation}</Box.Title>}
-        </Box.Header>
+        <Box.Header />
 
         {data && (
           <div className="flex flex-col gap-2">
-            <p className="text-xs uppercase text-gray700">Placa</p>
-            <p className="mb-3 text-4xl text-cyan200">{data.plate}</p>
+            <Label>Placa</Label>
+            <Value className="mb-3 text-4xl text-cyan200">{data.plate}</Value>
 
-            <p className="text-xs uppercase text-gray700">Status</p>
-            <p className="mb-3 text-4xl text-cyan200">
-              {data.left ? "Concluído" : "Estacionado"}
-            </p>
+            <Label>Status</Label>
+            <Value className="mb-3">
+              {data.left ? "Não estacionado" : "Estacionado"}
+            </Value>
 
-            <p className="text-xs uppercase text-gray700">Tempo atual</p>
-            <p className="text-2xl">{data.time}</p>
+            <Label>Tempo atual</Label>
+            <Value className="mb-3">{data.time}</Value>
 
-            <p className="text-xs uppercase text-gray700">Pagamento</p>
-            <p className="text-2xl">{data.paid ? "Pago" : "—"}</p>
+            <Label>Pagamento</Label>
+            <Value className="mb-3">{data.paid ? "Pago" : "—"}</Value>
           </div>
         )}
 
@@ -59,7 +58,9 @@ export default function ReservationDetail() {
           <Notification type="loading" text="Carregando resultados..." />
         )}
 
-        {!data && !isLoading && <Error text="Nenhum registro encontrado" />}
+        {!data && !isLoading && (
+          <Error text="Nenhum registro encontrado. Volte a página de histórico e tente novamente" />
+        )}
       </Box>
     </>
   );

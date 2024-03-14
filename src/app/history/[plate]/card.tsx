@@ -1,10 +1,14 @@
 "use client";
 
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 // Data
 import { parkingHistory } from "@/data/type/parkingHistory";
-import { useCallback } from "react";
+
+// Components
+import Label from "@/app/history/label";
+import Value from "@/app/history/value";
 
 type CardProps = {
   item: parkingHistory;
@@ -24,10 +28,13 @@ export default function Card({ item }: CardProps) {
       className="grid cursor-pointer grid-cols-2 grid-rows-2 rounded-md border border-gray300 p-4 shadow"
       onClick={handleItemClick}
     >
-      <p className="text-xs uppercase text-gray700">Tempo atual</p>
-      <p className="text-xs uppercase text-gray700">Pagamento</p>
-      <p className="text-2xl">{item.time}</p>
-      <p className="text-2xl">{item.paid ? "Pago" : "—"}</p>
+      <Label>Tempo atual</Label>
+      <Label>Pagamento</Label>
+      <Value>{item.time}</Value>
+      <Value>{item.paid ? "Pago" : "—"}</Value>
+
+      <p className="text-2xl"></p>
+      <p className="text-2xl"></p>
     </div>
   );
 }
