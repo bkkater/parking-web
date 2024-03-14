@@ -8,6 +8,8 @@ import Notification from "@/components/Notification";
 type StateProps = {
   isLoading: boolean;
   isSubmitSuccessful: boolean;
+  submittedText: string;
+  loadingText: string;
   children: ReactNode;
 };
 
@@ -15,32 +17,30 @@ export default function State({
   children,
   isSubmitSuccessful,
   isLoading,
+  loadingText,
+  submittedText,
 }: StateProps) {
   const [showCheck, setShowCheck] = useState(false);
-  const [showLoading, setShowLoading] = useState(false);
 
-  useEffect(() => {
-    setShowLoading(isLoading);
-  }, [isLoading]);
-
+  /**
+   * Exibe o check quando a requisição é bem sucedida.
+   */
   useEffect(() => {
     if (isSubmitSuccessful) {
       setShowCheck(true);
 
       setTimeout(() => {
         setShowCheck(false);
-      }, 1000);
+      }, 2000);
     }
   }, [isLoading, isSubmitSuccessful]);
 
-  console.log("isLoading", isLoading);
-
-  if (showLoading) {
-    return <Notification text="Registrando..." type="loading" />;
+  if (isLoading) {
+    return <Notification text={loadingText} type="loading" />;
   }
 
   if (showCheck) {
-    return <Notification text="REGISTRADO!" type="success" />;
+    return <Notification text={submittedText} type="success" />;
   }
 
   return <>{children}</>;

@@ -1,9 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Menu } from "lucide-react";
+
+// Components
+import Menu from "@/components/Menu";
 
 // Assets
-import LogoImg from "@/app/icon.png";
+import LogoImg from "@/assets/icon.png";
 
 export default function Header() {
   return (
@@ -20,7 +22,7 @@ export default function Header() {
           />
         </Link>
 
-        <Menu className="text-white" size={36} />
+        <Menu />
       </div>
     </header>
   );

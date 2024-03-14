@@ -1,5 +1,5 @@
-import { ButtonHTMLAttributes } from "react";
-import { tv, VariantProps } from "tailwind-variants";
+import { ComponentProps, forwardRef } from "react";
+import { tv } from "tailwind-variants";
 
 const button = tv({
   base: "h-16 w-full text-center uppercase outline-none text-white disabled:text-gray700 rounded shadow transition-colors",
@@ -22,22 +22,21 @@ const button = tv({
   },
 });
 
-export interface ButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof button> {
+type ButtonProps = ComponentProps<"button"> & {
   variant?: "filled" | "outlined";
   color?: "primary" | "secoundary";
-}
+};
 
-export default function Button({
-  variant,
-  color,
-  children,
-  ...rest
-}: ButtonProps) {
-  return (
-    <button className={button({ variant, color })} {...rest}>
-      {children}
-    </button>
-  );
-}
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ variant, color, children, ...rest }, ref) => {
+    return (
+      <button className={button({ variant, color })} ref={ref} {...rest}>
+        {children}
+      </button>
+    );
+  },
+);
+
+Button.displayName = "Button";
+
+export default Button;

@@ -12,7 +12,9 @@ export default function Notification({ text, type }: NotificationProps) {
         <Loader className="animate-spin text-cyan200 duration-1000" size={72} />
       )}
 
-      {type === "success" && <CircleCheck className="text-cyan200" size={72} />}
+      {type === "success" && (
+        <CircleCheck className="uppercase text-cyan200" size={72} />
+      )}
 
       <span className="mt-5">{text}</span>
     </div>
