@@ -38,6 +38,7 @@ A ideia era utilizar as tecnologias Next.js 14, React 18 e explorar as funcional
 -   [Tailwind CSS](https://tailwindcss.com/)
 -   [Radix-UI](https://www.radix-ui.com/)
 -   [React Hook Form](https://react-hook-form.com/)
+-   [Cypress](https://www.cypress.io/)
 -   [Lucide](https://lucide.netlify.app/)
 
 
