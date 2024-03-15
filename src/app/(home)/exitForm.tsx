@@ -33,15 +33,14 @@ const ExitForm = () => {
     watch,
     getValues,
     setError,
-    formState: {
-      errors: formErrors,
-      isSubmitting,
-      isSubmitSuccessful,
-      isLoading,
-    },
+    formState,
+    clearErrors,
+    trigger,
   } = useForm<FormSchema>({
     resolver: zodResolver(carSchema),
   });
+
+  const { errors: formErrors, isSubmitting } = formState;
 
   /**
    * Fecha modais de pagamento e saída.
@@ -67,6 +66,8 @@ const ExitForm = () => {
         setError("plate", {
           message: lastRecordError,
         });
+
+        return;
       }
 
       /**
@@ -76,6 +77,8 @@ const ExitForm = () => {
         setError("plate", {
           message: "Veículo não tem registro aberto",
         });
+
+        return;
       }
 
       /**
@@ -85,11 +88,22 @@ const ExitForm = () => {
         setError("plate", {
           message: lastRecordError || "Veículo já realizou o pagamento",
         });
-      } else {
-        onSubmitPayment(data);
+
+        return;
       }
+
+      clearErrors("plate");
+      trigger("plate");
+      onSubmitPayment(data);
     },
-    [getLastRecord, handleModalsClose, onSubmitPayment, setError],
+    [
+      clearErrors,
+      getLastRecord,
+      handleModalsClose,
+      onSubmitPayment,
+      setError,
+      trigger,
+    ],
   );
 
   /**
@@ -108,6 +122,8 @@ const ExitForm = () => {
         setError("plate", {
           message: lastRecordError,
         });
+
+        return;
       }
 
       /**
@@ -117,6 +133,8 @@ const ExitForm = () => {
         setError("plate", {
           message: "Veículo não tem registro aberto",
         });
+
+        return;
       }
 
       /**
@@ -126,11 +144,22 @@ const ExitForm = () => {
         setError("plate", {
           message: "Veículo não realizou o pagamento",
         });
-      } else {
-        onSubmitExit(data);
+
+        return;
       }
+
+      clearErrors("plate");
+      trigger("plate");
+      onSubmitExit(data);
     },
-    [getLastRecord, handleModalsClose, onSubmitExit, setError],
+    [
+      clearErrors,
+      getLastRecord,
+      handleModalsClose,
+      onSubmitExit,
+      setError,
+      trigger,
+    ],
   );
 
   const handleHistoryClick = useCallback(() => {
@@ -154,56 +183,53 @@ const ExitForm = () => {
     }
   }, [error.exit, setError]);
 
+  const shouldDisableTrigger = !watch("plate") || isSubmitting;
+
   return (
     <Form>
-      <Form.State
-        submittedText="Registrado!"
-        loadingText="Carregando..."
-        isLoading={isLoading}
-        isSubmitSuccessful={isSubmitSuccessful && !error}
+      <Form.Field>
+        <Form.Label htmlFor="plate">Numero da placa:</Form.Label>
+
+        <Form.Input
+          id="plate"
+          type="text"
+          placeholder="AAA-0000"
+          error={formErrors.plate?.message}
+          uppercaseInput
+          {...register("plate")}
+        />
+
+        {formErrors.plate && <Error text={formErrors.plate.message} />}
+      </Form.Field>
+
+      <PaymentAlert
+        open={showPaymentAlert}
+        onOpenChange={setShowPaymentAlert}
+        disableTrigger={shouldDisableTrigger}
+        onSubmit={handleSubmit(handleSubmitPayment, handleModalsClose)}
+        formState={formState}
       >
-        <Form.Field>
-          <Form.Label htmlFor="plate">Numero da placa:</Form.Label>
+        <span className="mb-3 text-4xl text-cyan200">{watch("plate")}</span>
+      </PaymentAlert>
 
-          <Form.Input
-            id="plate"
-            type="text"
-            placeholder="AAA-0000"
-            error={formErrors.plate?.message}
-            uppercaseInput
-            {...register("plate")}
-          />
+      <ExitAlert
+        open={showExitAlert}
+        onOpenChange={setShowExitAlert}
+        disableTrigger={shouldDisableTrigger}
+        onSubmit={handleSubmit(handleSubmitExit, handleModalsClose)}
+        formState={formState}
+      >
+        <span className="mb-3 text-4xl text-cyan200">{watch("plate")}</span>
+      </ExitAlert>
 
-          {formErrors.plate && <Error text={formErrors.plate.message} />}
-        </Form.Field>
-
-        <PaymentAlert
-          open={showPaymentAlert}
-          onOpenChange={setShowPaymentAlert}
-          disableTrigger={!watch("plate") || isSubmitting}
-          onSubmit={handleSubmit(handleSubmitPayment, handleModalsClose)}
-        >
-          <span className="mb-3 text-4xl text-cyan200">{watch("plate")}</span>
-        </PaymentAlert>
-
-        <ExitAlert
-          open={showExitAlert}
-          onOpenChange={setShowExitAlert}
-          disableTrigger={!watch("plate") || isSubmitting}
-          onSubmit={handleSubmit(handleSubmitExit, handleModalsClose)}
-        >
-          <span className="mb-3 text-4xl text-cyan200">{watch("plate")}</span>
-        </ExitAlert>
-
-        <button
-          type="button"
-          onClick={handleHistoryClick}
-          className="mx-auto mt-3 font-semibold uppercase text-cyan200 transition-colors hover:text-cyan300 disabled:text-gray700"
-          disabled={!watch("plate") || isSubmitting}
-        >
-          Ver histórico
-        </button>
-      </Form.State>
+      <button
+        type="button"
+        onClick={handleHistoryClick}
+        disabled={shouldDisableTrigger}
+        className="mx-auto mt-3 font-semibold uppercase text-cyan200 transition-colors hover:text-cyan300 disabled:text-gray700"
+      >
+        Ver histórico
+      </button>
     </Form>
   );
 };

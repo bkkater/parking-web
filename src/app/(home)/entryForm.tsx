@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -25,8 +25,9 @@ const EntryForm = () => {
     handleSubmit,
     watch,
     setError,
-
-    formState: { errors: formErrors, isSubmitSuccessful, isSubmitting },
+    clearErrors,
+    trigger,
+    formState: { errors: formErrors, isSubmitting, isSubmitSuccessful },
   } = useForm<FormSchema>({
     resolver: zodResolver(carSchema),
   });
@@ -38,20 +39,24 @@ const EntryForm = () => {
     async (data: FormSchema) => {
       const { lastRecord, error: lastRecordError } = await getLastRecord(data);
 
-      /**
-       * Se houver erro no registro anterior, ou se o veículo já estiver estacionado, exibe mensagem de erro.
-       */
-      if (lastRecordError || (lastRecord && !lastRecord.left)) {
-        setError("plate", {
-          message: lastRecordError || "Veículo já estacionado",
+      if (lastRecordError) {
+        return setError("plate", {
+          message: lastRecordError,
         });
-
-        return;
       }
 
+      if (lastRecord && !lastRecord.left) {
+        return setError("plate", {
+          type: "",
+          message: "Veículo já estacionado",
+        });
+      }
+
+      clearErrors("plate");
+      trigger("plate");
       onSubmitEntry(data);
     },
-    [getLastRecord, onSubmitEntry, setError],
+    [clearErrors, getLastRecord, onSubmitEntry, setError, trigger],
   );
 
   useEffect(() => {
@@ -65,7 +70,7 @@ const EntryForm = () => {
   return (
     <Form onSubmit={handleSubmit(handleSubmitEntry)}>
       <Form.State
-        isSubmitSuccessful={isSubmitSuccessful && !formErrors}
+        isSubmitSuccessful={isSubmitSuccessful && !!formErrors.plate}
         isLoading={isSubmitting}
         submittedText="Registrado!"
         loadingText="Registrando..."

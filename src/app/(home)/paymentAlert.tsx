@@ -1,15 +1,18 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, ReactNode, SetStateAction } from "react";
+import { FormState } from "react-hook-form";
 
 // Components
 import AlertDialog from "@/components/AlertDialog";
 import Button from "@/components/Button";
+import Form from "@/components/Form";
 
 type PaymentAlertProps = {
   onSubmit: () => void;
   onOpenChange: Dispatch<SetStateAction<boolean>>;
   open: boolean;
   disableTrigger: boolean;
-  children: React.ReactNode | string;
+  children: ReactNode | string;
+  formState: FormState<any>;
 };
 
 export default function PaymentAlert({
@@ -18,7 +21,10 @@ export default function PaymentAlert({
   children,
   open,
   onOpenChange,
+  formState,
 }: PaymentAlertProps) {
+  const { isSubmitSuccessful, errors, isSubmitting } = formState;
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialog.Trigger asChild>
@@ -28,19 +34,26 @@ export default function PaymentAlert({
       </AlertDialog.Trigger>
 
       <AlertDialog.Content>
-        <AlertDialog.Title>
-          Confima o pagamento da placa abaixo?
-        </AlertDialog.Title>
+        <Form.State
+          isSubmitSuccessful={isSubmitSuccessful && !!errors.plate}
+          isLoading={isSubmitting}
+          submittedText="Pago!"
+          loadingText="Confirmando..."
+        >
+          <AlertDialog.Title>
+            Confima o pagamento da placa abaixo?
+          </AlertDialog.Title>
 
-        {children}
+          {children}
 
-        <AlertDialog.Action asChild>
-          <Button color="secoundary" onClick={onSubmit} type="button">
-            Confirmar
-          </Button>
-        </AlertDialog.Action>
+          <AlertDialog.Action asChild>
+            <Button color="secoundary" onClick={onSubmit} type="button">
+              Confirmar
+            </Button>
+          </AlertDialog.Action>
 
-        <AlertDialog.Cancel />
+          <AlertDialog.Cancel />
+        </Form.State>
       </AlertDialog.Content>
     </AlertDialog>
   );
