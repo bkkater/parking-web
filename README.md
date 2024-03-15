@@ -54,7 +54,7 @@ Acredito que tenha conseguido construir nesse desafio uma aplicação boa em que
 
 - Debug de requisições server side do next - o que me fez optar por fazer client-side. 
 - Manipulação de estados do React Hooks Form, principalmente do isSubmitSuccessful, onde acabei escolhendo por criar um estado próprio.
-- Problemas na cobertura de testes por não ter escolhido uma boa opão no desenvolvimento dos errors handlers.
+- Problemas na cobertura de testes por não ter escolhido uma boa opção no desenvolvimento dos errors handlers.
 
 Após o desafio, todos esses problemas serão refatorados para que funcionem da melhor forma possível em quesito dee código, sem perder os detalhes na experiência do usuário.
 
