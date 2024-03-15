@@ -30,7 +30,11 @@ export default function PaymentAlert({
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialog.Trigger asChild>
-        <Button color="secoundary" disabled={disableTrigger}>
+        <Button
+          color="secoundary"
+          disabled={disableTrigger}
+          data-testid="open_pay_alert_btn"
+        >
           Pagamento
         </Button>
       </AlertDialog.Trigger>
@@ -49,7 +53,12 @@ export default function PaymentAlert({
           {children}
 
           <AlertDialog.Action asChild>
-            <Button color="secoundary" onClick={onSubmit} type="button">
+            <Button
+              color="secoundary"
+              onClick={onSubmit}
+              type="button"
+              data-testid="submit_pay_plate"
+            >
               Confirmar
             </Button>
           </AlertDialog.Action>

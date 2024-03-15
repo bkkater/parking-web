@@ -37,7 +37,10 @@ export default function ReservationDetail() {
         <Box.Header />
 
         {data && (
-          <div className="flex flex-col gap-2">
+          <div
+            className="flex flex-col gap-2"
+            data-testid="detail_history_card"
+          >
             <Label>Placa</Label>
             <Value className="mb-3 text-4xl text-cyan200">{data.plate}</Value>
 

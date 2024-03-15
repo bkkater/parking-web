@@ -1,61 +1,67 @@
 import { errorMessage } from "@/utils/schema/car";
 
 /**
- * Testa a funcionalidade de registrar um veículo da aba de Entrada.
+ * Testa funcionalidades da aba de Entrada.
  */
-describe("Register plate", () => {
+describe("Entry actions", () => {
   beforeEach(() => {
     cy.visit("/");
   });
 
-  it("should be able to register plate", () => {
+  it("should be able to entry and return a message", () => {
     cy.get('[data-testid="input_entry_plate"]').type("AAA-0000");
 
-    cy.get('[data-testid="submit_entry-plate"]')
+    cy.get('[data-testid="submit_entry_plate"]')
       .should("not.be.disabled")
       .click();
 
     cy.get('[data-testid="loading"]').should("exist");
 
-    cy.get('[data-testid="state_message"]').then(($message) => {
-      if ($message.text() === "Registrado!") {
-        cy.log("Veículo registrado com sucesso!");
-      } else {
-        cy.log("Erro ao registrar veículo.");
-      }
-    });
+    cy.get('[data-testid="state_message"]');
   });
 });
 
-// it("should not be able to register plate with invalid format", () => {
-//   cy.get('[data-testid="input_entry_plate"]').type("AAA0000");
+/**
+ * Testa a funcionalidades da aba de saída.
+ */
+describe("Exit actions", () => {
+  beforeEach(() => {
+    cy.visit("/");
+    cy.get('[data-testid="home_exit_btn"]').click();
+  });
 
-//   cy.get('[data-testid="submit_entry-plate"]')
-//     .should("not.be.disabled")
-//     .click();
+  it("should be able to pay and return a message", () => {
+    cy.get('[data-testid="input_exit_plate"]').type("AAA-0000");
 
-//   cy.get('[data-testid="state_message"]').should("have.text", errorMessage);
-// });
-// it("should not be able to register plate with invalid format", () => {
-//   cy.get('[data-testid="input_entry_plate"]').type("AA0-0000");
+    cy.get('[data-testid="open_pay_alert_btn"]')
+      .should("not.be.disabled")
+      .click();
 
-//   cy.get('[data-testid="submit_entry-plate"]')
-//     .should("not.be.disabled")
-//     .click();
+    cy.get('[data-testid="submit_pay_plate"]')
+      .should("not.be.disabled")
+      .click();
 
-//   cy.get('[data-testid="state_message"]').should("have.text", errorMessage);
-// });
-// it("should not be able to register plate with invalid format", () => {
-//   cy.get('[data-testid="input_entry_plate"]').type("000-AAAA");
+    cy.get('[data-testid="loading"]').should("exist");
+  });
 
-//   cy.get('[data-testid="submit_entry-plate"]')
-//     .should("not.be.disabled")
-//     .click();
+  it("should be able to exit and return a message", () => {
+    cy.get('[data-testid="input_exit_plate"]').type("AAA-0000");
 
-//   cy.get('[data-testid="state_message"]').should("have.text", errorMessage);
-// });
+    cy.get('[data-testid="open_exit_alert_btn"]')
+      .should("not.be.disabled")
+      .click();
 
-// Teste das abas da home
+    cy.get('[data-testid="submit_exit_plate"]')
+      .should("not.be.disabled")
+      .click();
+
+    cy.get('[data-testid="loading"]').should("exist");
+  });
+});
+
+/**
+ * Testa das abas da home.
+ */
 describe("Navigate between tabs", () => {
   beforeEach(() => {
     cy.visit("/");
@@ -89,7 +95,8 @@ describe("Navigate between tabs", () => {
  */
 describe("Open history", () => {
   beforeEach(() => {
-    cy.visit("/?tab=exit");
+    cy.visit("/");
+    cy.get('[data-testid="home_exit_btn"]').click();
   });
 
   it("should be possible to open the history page", () => {

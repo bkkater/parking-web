@@ -30,7 +30,12 @@ export default function ExitAlert({
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialog.Trigger asChild>
-        <Button color="secoundary" variant="outlined" disabled={disableTrigger}>
+        <Button
+          color="secoundary"
+          variant="outlined"
+          disabled={disableTrigger}
+          data-testid="open_exit_alert_btn"
+        >
           Saída
         </Button>
       </AlertDialog.Trigger>
@@ -49,7 +54,12 @@ export default function ExitAlert({
           {children}
 
           <AlertDialog.Action asChild>
-            <Button color="secoundary" onClick={onSubmit} type="button">
+            <Button
+              color="secoundary"
+              onClick={onSubmit}
+              type="button"
+              data-testid="submit_exit_plate"
+            >
               Liberar Saída
             </Button>
           </AlertDialog.Action>

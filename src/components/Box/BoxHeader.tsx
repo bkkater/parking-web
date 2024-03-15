@@ -12,7 +12,7 @@ export default function Header({ children }: BoxHeaderProps) {
 
   return (
     <div className="mb-2 flex items-center gap-3 md:col-span-2">
-      <button onClick={() => router.back()}>
+      <button onClick={() => router.back()} data-testid="box_back_btn">
         <ArrowLeft className="text-cyan200" size={32} />
       </button>
 

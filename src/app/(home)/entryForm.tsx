@@ -98,7 +98,7 @@ const EntryForm = () => {
         <Button
           type="submit"
           disabled={!watch("plate") || isSubmitting}
-          data-testid="submit_entry-plate"
+          data-testid="submit_entry_plate"
         >
           Confirmar entrada
         </Button>

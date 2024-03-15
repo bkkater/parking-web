@@ -73,19 +73,11 @@ describe("Card click", () => {
 
   it("should store data on click card", () => {
     cy.get('[data-testid="history_card"]').first().click();
+
+    cy.window().then((win) => {
+      expect(win.localStorage.getItem("historyData")).not.to.be.null;
+    });
+
     cy.location("pathname").should("eq", "/history/detail");
-
-    // cy.window().then((win) => {
-    //   const state = win.history.state;
-
-    //   expect(state).to.have.property("historyData");
-    //   expect(state.historyData).to.exist;
-    // });
   });
-
-  // it("should not show card and should show invalid params", () => {
-  //   cy.get('[data-testid="history_card"]').should("not.exist");
-
-  //   cy.get('[data-testid="state_message"]').should("have.text", errorMessage);
-  // });
 });
