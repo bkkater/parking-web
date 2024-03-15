@@ -24,8 +24,6 @@ const EntryForm = () => {
     handleSubmit,
     watch,
     setError,
-    clearErrors,
-    trigger,
     formState: { errors: formErrors, isSubmitting },
   } = useForm<FormSchema>({
     resolver: zodResolver(carSchema),

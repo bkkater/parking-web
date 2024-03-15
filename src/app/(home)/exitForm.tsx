@@ -46,6 +46,18 @@ const ExitForm = () => {
     }
   }, [showExitAlert, showPaymentAlert]);
 
+  const handleError = useCallback(
+    (message: string) => {
+      setError("plate", {
+        message,
+      });
+
+      setSuccess(false);
+      handleModalsClose();
+    },
+    [handleModalsClose, setError],
+  );
+
   const handleFormSubmit = useCallback(
     async (data: FormSchema, isPayment: boolean) => {
       setSuccess(false);
@@ -53,39 +65,19 @@ const ExitForm = () => {
       const { lastRecord, error: lastRecordError } = await getLastRecord(data);
 
       if (lastRecordError) {
-        setError("plate", {
-          message: lastRecordError,
-        });
-
-        setSuccess(false);
-        return;
+        return handleError(lastRecordError);
       }
 
       if ((lastRecord && lastRecord.left) || !lastRecord) {
-        setError("plate", {
-          message: "Veículo não tem registro aberto",
-        });
-
-        setSuccess(false);
-        return;
+        return handleError("Veículo não tem registro aberto");
       }
 
       if (isPayment && lastRecord && lastRecord.paid && !lastRecord.left) {
-        setError("plate", {
-          message: "Veículo já realizou o pagamento",
-        });
-
-        setSuccess(false);
-        return;
+        return handleError("Veículo já realizou o pagamento");
       }
 
       if (!isPayment && lastRecord && !lastRecord.paid) {
-        setError("plate", {
-          message: "Veículo não realizou o pagamento",
-        });
-
-        setSuccess(false);
-        return;
+        return handleError("Veículo não realizou o pagamento");
       }
 
       if (isPayment) {
@@ -96,7 +88,7 @@ const ExitForm = () => {
 
       setSuccess(true);
     },
-    [getLastRecord, onSubmitPayment, onSubmitExit, setError],
+    [getLastRecord, handleError, onSubmitPayment, onSubmitExit],
   );
 
   const handleSubmitPayment = useCallback(
@@ -139,15 +131,6 @@ const ExitForm = () => {
       });
     }
   }, [error.exit, setError]);
-
-  /**
-   * Fecha modais de pagamento e saída em caso de erro.
-   */
-  useEffect(() => {
-    if (formErrors.plate && (showExitAlert || showPaymentAlert)) {
-      handleModalsClose();
-    }
-  }, [formErrors.plate, handleModalsClose, showExitAlert, showPaymentAlert]);
 
   /**
    * Finaliza a animação de sucesso e fecha modais de pagamento e saída.
