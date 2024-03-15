@@ -13,6 +13,7 @@ type ExitAlertProps = {
   disableTrigger: boolean;
   children: ReactNode | string;
   formState: FormState<any>;
+  success: boolean;
 };
 
 export default function ExitAlert({
@@ -22,8 +23,9 @@ export default function ExitAlert({
   open,
   onOpenChange,
   formState,
+  success,
 }: ExitAlertProps) {
-  const { isSubmitSuccessful, errors, isSubmitting } = formState;
+  const { isSubmitting } = formState;
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -35,7 +37,7 @@ export default function ExitAlert({
 
       <AlertDialog.Content>
         <Form.State
-          isSubmitSuccessful={isSubmitSuccessful && !!errors.plate}
+          isSubmitSuccessful={success}
           isLoading={isSubmitting}
           submittedText="Saída liberada!"
           loadingText="Confirmando..."

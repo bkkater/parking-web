@@ -19,6 +19,7 @@ import { FormSchema, useHomeContext } from "@/contexts/homeContext";
 
 const EntryForm = () => {
   const { getLastRecord, onSubmitEntry, error } = useHomeContext();
+  const [success, setSuccess] = useState(false);
 
   const {
     register,
@@ -27,7 +28,7 @@ const EntryForm = () => {
     setError,
     clearErrors,
     trigger,
-    formState: { errors: formErrors, isSubmitting, isSubmitSuccessful },
+    formState: { errors: formErrors, isSubmitting },
   } = useForm<FormSchema>({
     resolver: zodResolver(carSchema),
   });
@@ -37,6 +38,7 @@ const EntryForm = () => {
    */
   const handleSubmitEntry = useCallback(
     async (data: FormSchema) => {
+      setSuccess(false);
       const { lastRecord, error: lastRecordError } = await getLastRecord(data);
 
       if (lastRecordError) {
@@ -47,16 +49,14 @@ const EntryForm = () => {
 
       if (lastRecord && !lastRecord.left) {
         return setError("plate", {
-          type: "",
           message: "Veículo já estacionado",
         });
       }
 
-      clearErrors("plate");
-      trigger("plate");
       onSubmitEntry(data);
+      setSuccess(true);
     },
-    [clearErrors, getLastRecord, onSubmitEntry, setError, trigger],
+    [getLastRecord, onSubmitEntry, setError],
   );
 
   useEffect(() => {
@@ -67,10 +67,18 @@ const EntryForm = () => {
     }
   }, [error.entry, setError]);
 
+  useEffect(() => {
+    if (success) {
+      setTimeout(() => {
+        setSuccess(false);
+      }, 2000);
+    }
+  }, [success]);
+
   return (
     <Form onSubmit={handleSubmit(handleSubmitEntry)}>
       <Form.State
-        isSubmitSuccessful={isSubmitSuccessful && !!formErrors.plate}
+        isSubmitSuccessful={success}
         isLoading={isSubmitting}
         submittedText="Registrado!"
         loadingText="Registrando..."

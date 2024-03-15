@@ -20,26 +20,11 @@ export default function State({
   loadingText,
   submittedText,
 }: StateProps) {
-  const [showCheck, setShowCheck] = useState(false);
-
-  /**
-   * Exibe o check quando a requisição é bem sucedida.
-   */
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      setShowCheck(true);
-
-      setTimeout(() => {
-        setShowCheck(false);
-      }, 2000);
-    }
-  }, [isLoading, isSubmitSuccessful]);
-
   if (isLoading) {
     return <Notification text={loadingText} type="loading" />;
   }
 
-  if (showCheck) {
+  if (isSubmitSuccessful) {
     return <Notification text={submittedText} type="success" />;
   }
 

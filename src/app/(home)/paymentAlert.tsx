@@ -13,6 +13,7 @@ type PaymentAlertProps = {
   disableTrigger: boolean;
   children: ReactNode | string;
   formState: FormState<any>;
+  success: boolean;
 };
 
 export default function PaymentAlert({
@@ -22,8 +23,9 @@ export default function PaymentAlert({
   open,
   onOpenChange,
   formState,
+  success,
 }: PaymentAlertProps) {
-  const { isSubmitSuccessful, errors, isSubmitting } = formState;
+  const { isSubmitting } = formState;
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -35,7 +37,7 @@ export default function PaymentAlert({
 
       <AlertDialog.Content>
         <Form.State
-          isSubmitSuccessful={isSubmitSuccessful && !!errors.plate}
+          isSubmitSuccessful={success}
           isLoading={isSubmitting}
           submittedText="Pago!"
           loadingText="Confirmando..."

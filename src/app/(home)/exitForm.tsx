@@ -26,36 +26,32 @@ const ExitForm = () => {
 
   const [showPaymentAlert, setShowPaymentAlert] = useState(false);
   const [showExitAlert, setShowExitAlert] = useState(false);
+  const [success, setSuccess] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    getValues,
-    setError,
-    formState,
-    clearErrors,
-    trigger,
-  } = useForm<FormSchema>({
-    resolver: zodResolver(carSchema),
-  });
+  const { register, handleSubmit, watch, getValues, setError, formState } =
+    useForm<FormSchema>({
+      resolver: zodResolver(carSchema),
+    });
 
-  const { errors: formErrors, isSubmitting } = formState;
+  const { errors: formErrors, isSubmitting, isSubmitted } = formState;
 
   /**
    * Fecha modais de pagamento e saída.
    */
   const handleModalsClose = useCallback(() => {
-    setShowPaymentAlert(false);
-    setShowExitAlert(false);
-  }, []);
+    if (showPaymentAlert) {
+      setShowPaymentAlert(false);
+    } else if (showExitAlert) {
+      setShowExitAlert(false);
+    }
+  }, [showExitAlert, showPaymentAlert]);
 
   /**
    * Submit do pagamento do veículo.
    */
   const handleSubmitPayment = useCallback(
     async (data: FormSchema) => {
-      handleModalsClose();
+      setSuccess(false);
 
       const { lastRecord, error: lastRecordError } = await getLastRecord(data);
 
@@ -67,6 +63,7 @@ const ExitForm = () => {
           message: lastRecordError,
         });
 
+        setSuccess(false);
         return;
       }
 
@@ -78,6 +75,7 @@ const ExitForm = () => {
           message: "Veículo não tem registro aberto",
         });
 
+        setSuccess(false);
         return;
       }
 
@@ -89,21 +87,14 @@ const ExitForm = () => {
           message: lastRecordError || "Veículo já realizou o pagamento",
         });
 
+        setSuccess(false);
         return;
       }
 
-      clearErrors("plate");
-      trigger("plate");
       onSubmitPayment(data);
+      setSuccess(true);
     },
-    [
-      clearErrors,
-      getLastRecord,
-      handleModalsClose,
-      onSubmitPayment,
-      setError,
-      trigger,
-    ],
+    [getLastRecord, onSubmitPayment, setError],
   );
 
   /**
@@ -111,7 +102,7 @@ const ExitForm = () => {
    */
   const handleSubmitExit = useCallback(
     async (data: FormSchema) => {
-      handleModalsClose();
+      setSuccess(false);
 
       const { lastRecord, error: lastRecordError } = await getLastRecord(data);
 
@@ -123,6 +114,7 @@ const ExitForm = () => {
           message: lastRecordError,
         });
 
+        setSuccess(false);
         return;
       }
 
@@ -134,6 +126,7 @@ const ExitForm = () => {
           message: "Veículo não tem registro aberto",
         });
 
+        setSuccess(false);
         return;
       }
 
@@ -144,22 +137,15 @@ const ExitForm = () => {
         setError("plate", {
           message: "Veículo não realizou o pagamento",
         });
+        setSuccess(false);
 
         return;
       }
 
-      clearErrors("plate");
-      trigger("plate");
       onSubmitExit(data);
+      setSuccess(true);
     },
-    [
-      clearErrors,
-      getLastRecord,
-      handleModalsClose,
-      onSubmitExit,
-      setError,
-      trigger,
-    ],
+    [getLastRecord, onSubmitExit, setError],
   );
 
   const handleHistoryClick = useCallback(() => {
@@ -181,9 +167,31 @@ const ExitForm = () => {
         message: error.exit,
       });
     }
-  }, [error.exit, setError]);
+  }, [
+    error.exit,
+    formErrors,
+    handleModalsClose,
+    setError,
+    showExitAlert,
+    showPaymentAlert,
+  ]);
 
-  const shouldDisableTrigger = !watch("plate") || isSubmitting;
+  useEffect(() => {
+    if (formErrors.plate && (showExitAlert || showPaymentAlert)) {
+      handleModalsClose();
+    }
+  }, [formErrors, handleModalsClose, showExitAlert, showPaymentAlert]);
+
+  useEffect(() => {
+    if (success) {
+      setTimeout(() => {
+        setSuccess(false);
+        handleModalsClose();
+      }, 2000);
+    }
+  }, [handleModalsClose, success]);
+
+  const shouldDisableTrigger = !watch("plate") || isSubmitting || success;
 
   return (
     <Form>
@@ -208,6 +216,7 @@ const ExitForm = () => {
         disableTrigger={shouldDisableTrigger}
         onSubmit={handleSubmit(handleSubmitPayment, handleModalsClose)}
         formState={formState}
+        success={success}
       >
         <span className="mb-3 text-4xl text-cyan200">{watch("plate")}</span>
       </PaymentAlert>
@@ -218,6 +227,7 @@ const ExitForm = () => {
         disableTrigger={shouldDisableTrigger}
         onSubmit={handleSubmit(handleSubmitExit, handleModalsClose)}
         formState={formState}
+        success={success}
       >
         <span className="mb-3 text-4xl text-cyan200">{watch("plate")}</span>
       </ExitAlert>
