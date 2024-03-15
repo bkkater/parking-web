@@ -1,10 +1,9 @@
 "use client";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 // Components
 import Tabs from "@/components/Tabs";
-import Notification from "@/components/Notification";
 
 type TabValue = "entry" | "exit";
 

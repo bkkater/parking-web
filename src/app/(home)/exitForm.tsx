@@ -33,7 +33,7 @@ const ExitForm = () => {
       resolver: zodResolver(carSchema),
     });
 
-  const { errors: formErrors, isSubmitting, isSubmitted } = formState;
+  const { errors: formErrors, isSubmitting } = formState;
 
   /**
    * Fecha modais de pagamento e saída.
@@ -46,18 +46,12 @@ const ExitForm = () => {
     }
   }, [showExitAlert, showPaymentAlert]);
 
-  /**
-   * Submit do pagamento do veículo.
-   */
-  const handleSubmitPayment = useCallback(
-    async (data: FormSchema) => {
+  const handleFormSubmit = useCallback(
+    async (data: FormSchema, isPayment: boolean) => {
       setSuccess(false);
 
       const { lastRecord, error: lastRecordError } = await getLastRecord(data);
 
-      /**
-       * Se ocorreu algum erro ao pegar dados do veículo, exibe mensagem de erro.
-       */
       if (lastRecordError) {
         setError("plate", {
           message: lastRecordError,
@@ -67,9 +61,6 @@ const ExitForm = () => {
         return;
       }
 
-      /**
-       * Se o veículo não possui registro, exibe mensagem de erro.
-       */
       if ((lastRecord && lastRecord.left) || !lastRecord) {
         setError("plate", {
           message: "Veículo não tem registro aberto",
@@ -79,75 +70,52 @@ const ExitForm = () => {
         return;
       }
 
-      /**
-       * Se o veículo já realizou o pagamento, exibe mensagem de erro.
-       */
-      if (lastRecord.paid && !lastRecord.left) {
+      if (isPayment && lastRecord && lastRecord.paid && !lastRecord.left) {
         setError("plate", {
-          message: lastRecordError || "Veículo já realizou o pagamento",
+          message: "Veículo já realizou o pagamento",
         });
 
         setSuccess(false);
         return;
       }
 
-      onSubmitPayment(data);
-      setSuccess(true);
-    },
-    [getLastRecord, onSubmitPayment, setError],
-  );
-
-  /**
-   * Submit da saída do veículo.
-   */
-  const handleSubmitExit = useCallback(
-    async (data: FormSchema) => {
-      setSuccess(false);
-
-      const { lastRecord, error: lastRecordError } = await getLastRecord(data);
-
-      /**
-       * Se ocorreu algum erro ao pegar dados do veículo, exibe mensagem de erro.
-       */
-      if (lastRecordError) {
-        setError("plate", {
-          message: lastRecordError,
-        });
-
-        setSuccess(false);
-        return;
-      }
-
-      /**
-       * Se o veículo não possui registro, exibe mensagem de erro.
-       */
-      if ((lastRecord && lastRecord.left) || !lastRecord) {
-        setError("plate", {
-          message: "Veículo não tem registro aberto",
-        });
-
-        setSuccess(false);
-        return;
-      }
-
-      /**
-       * Se o veículo não realizou o pagamento, exibe mensagem de erro.
-       */
-      if (lastRecord && !lastRecord.paid) {
+      if (!isPayment && lastRecord && !lastRecord.paid) {
         setError("plate", {
           message: "Veículo não realizou o pagamento",
         });
-        setSuccess(false);
 
+        setSuccess(false);
         return;
       }
 
-      onSubmitExit(data);
+      if (isPayment) {
+        onSubmitPayment(data);
+      } else {
+        onSubmitExit(data);
+      }
+
       setSuccess(true);
     },
-    [getLastRecord, onSubmitExit, setError],
+    [getLastRecord, onSubmitPayment, onSubmitExit, setError],
   );
 
+  const handleSubmitPayment = useCallback(
+    async (data: FormSchema) => {
+      await handleFormSubmit(data, true);
+    },
+    [handleFormSubmit],
+  );
+
+  const handleSubmitExit = useCallback(
+    async (data: FormSchema) => {
+      await handleFormSubmit(data, false);
+    },
+    [handleFormSubmit],
+  );
+
+  /**
+   * Faz validação da placa e redireciona para a página de histórico.
+   */
   const handleHistoryClick = useCallback(() => {
     const plate = getValues("plate");
     const validationResult = carSchema.safeParse({ plate });
@@ -161,33 +129,37 @@ const ExitForm = () => {
     }
   }, [getValues, router, setError]);
 
+  /**
+   * Verifica se houve erro na requisição de getLastRecord.
+   */
   useEffect(() => {
     if (error.exit) {
       setError("plate", {
         message: error.exit,
       });
     }
-  }, [
-    error.exit,
-    formErrors,
-    handleModalsClose,
-    setError,
-    showExitAlert,
-    showPaymentAlert,
-  ]);
+  }, [error.exit, setError]);
 
+  /**
+   * Fecha modais de pagamento e saída em caso de erro.
+   */
   useEffect(() => {
     if (formErrors.plate && (showExitAlert || showPaymentAlert)) {
       handleModalsClose();
     }
-  }, [formErrors, handleModalsClose, showExitAlert, showPaymentAlert]);
+  }, [formErrors.plate, handleModalsClose, showExitAlert, showPaymentAlert]);
 
+  /**
+   * Finaliza a animação de sucesso e fecha modais de pagamento e saída.
+   */
   useEffect(() => {
     if (success) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setSuccess(false);
         handleModalsClose();
       }, 2000);
+
+      return () => clearTimeout(timer);
     }
   }, [handleModalsClose, success]);
 

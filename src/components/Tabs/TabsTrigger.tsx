@@ -1,9 +1,9 @@
 import * as Tabs from "@radix-ui/react-tabs";
 
-interface TabsProps extends Tabs.TabsTriggerProps {
+type TabsProps = Tabs.TabsTriggerProps & {
   children: React.ReactNode | string;
   value: string;
-}
+};
 
 export default function Trigger({ children, value, ...rest }: TabsProps) {
   return (

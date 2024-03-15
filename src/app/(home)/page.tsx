@@ -1,7 +1,4 @@
-import { Suspense } from "react";
-
 // Components
-import Notification from "@/components/Notification";
 import EntryForm from "@/app/(home)/entryForm";
 import ExitForm from "@/app/(home)/exitForm";
 import HomeTabs from "@/app/(home)/tabs";

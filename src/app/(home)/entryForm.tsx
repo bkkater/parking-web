@@ -4,8 +4,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { z } from "zod";
-
 // Components
 import Button from "@/components/Button";
 import Form from "@/components/Form";

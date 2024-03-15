@@ -1,9 +1,9 @@
 import * as Tabs from "@radix-ui/react-tabs";
 
-interface TabsProps extends Tabs.TabsContentProps {
+type TabsProps = Tabs.TabsContentProps & {
   children: React.ReactNode | string;
   value: string;
-}
+};
 
 export default function Content({ children, value, ...rest }: TabsProps) {
   return (

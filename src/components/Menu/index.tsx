@@ -1,6 +1,6 @@
 "use client";
-import Image from "next/image";
 
+import Image from "next/image";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Menu as MenuIcon, X } from "lucide-react";
 

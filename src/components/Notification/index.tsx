@@ -1,9 +1,9 @@
 import { CircleCheck, Loader } from "lucide-react";
 
-interface NotificationProps {
+type NotificationProps = {
   type: "loading" | "success";
   text: string;
-}
+};
 
 export default function Notification({ text, type }: NotificationProps) {
   return (
