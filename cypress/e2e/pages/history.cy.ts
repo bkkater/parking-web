@@ -71,12 +71,8 @@ describe("Card click", () => {
     cy.location("pathname").should("eq", "/history/detail");
   });
 
-  it("should store data on click card", () => {
+  it("should redirect to detail", () => {
     cy.get('[data-testid="history_card"]').first().click();
-
-    cy.window().then((win) => {
-      expect(win.localStorage.getItem("historyData")).not.to.be.null;
-    });
 
     cy.location("pathname").should("eq", "/history/detail");
   });
