@@ -30,7 +30,7 @@
 
 Este projeto foi desenvolvido como parte de um desafio de programação, com o objetivo de criar uma aplicação web para gerenciamento de um estacionamento. 
 
-A ideia era utilizar as tecnologias Next.js 14, React 18 e explorar as funcionalidades do Tailwind CSS. O projeto serviu como um desafio pessoal para aprimorar habilidades de desenvolvimento web e explorar novas tecnologias.
+A ideia era utilizar as tecnologias Next.js 14, React 18 e explorar as funcionalidades do Tailwind CSS. O projeto serviu também como um desafio pessoal para aprimorar habilidades de desenvolvimento web e explorar novas tecnologias.
 
 # :computer: O que utilizei
 
