@@ -2,7 +2,7 @@ import { defineConfig } from "cypress";
 
 export default defineConfig({
   e2e: {
-    baseUrl: "http://localhost:3000",
+    baseUrl: "https://parking-webapp.vercel.app",
     setupNodeEvents(on, config) {},
   },
 });
