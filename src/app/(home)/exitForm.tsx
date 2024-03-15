@@ -18,6 +18,7 @@ import { carSchema, errorMessage } from "@/utils/schema/car";
 
 // Contexts
 import { FormSchema, useHomeContext } from "@/contexts/homeContext";
+import Notification from "@/components/Notification";
 
 const ExitForm = () => {
   const router = useRouter();
@@ -27,6 +28,7 @@ const ExitForm = () => {
   const [showPaymentAlert, setShowPaymentAlert] = useState(false);
   const [showExitAlert, setShowExitAlert] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [loadingHistory, setLoadingHistory] = useState(false);
 
   const { register, handleSubmit, watch, getValues, setError, formState } =
     useForm<FormSchema>({
@@ -109,6 +111,8 @@ const ExitForm = () => {
    * Faz validação da placa e redireciona para a página de histórico.
    */
   const handleHistoryClick = useCallback(() => {
+    setLoadingHistory(true);
+
     const plate = getValues("plate");
     const validationResult = carSchema.safeParse({ plate });
 
@@ -193,7 +197,11 @@ const ExitForm = () => {
         disabled={shouldDisableTrigger}
         className="mx-auto mt-3 font-semibold uppercase text-cyan200 transition-colors hover:text-cyan300 disabled:text-gray700"
       >
-        Ver histórico
+        {loadingHistory ? (
+          <Notification type="loading" text="Carregando" size={22} />
+        ) : (
+          "Ver histórico"
+        )}
       </button>
     </Form>
   );
