@@ -42,11 +42,16 @@ export default function HomeTabs({ children }: HomeTabsProps) {
       defaultValue="entry"
       value={activeTab || DEFAULT_TAB}
       onValueChange={handleTabChange}
+      data-testid="home_tabs"
     >
       <Tabs.List className="flex" aria-label="Registre os carros estacionados">
-        <Tabs.Trigger value="entry">Entrada</Tabs.Trigger>
+        <Tabs.Trigger value="entry" data-testid="home_entry_btn">
+          Entrada
+        </Tabs.Trigger>
 
-        <Tabs.Trigger value="exit">Saída</Tabs.Trigger>
+        <Tabs.Trigger value="exit" data-testid="home_exit_btn">
+          Saída
+        </Tabs.Trigger>
       </Tabs.List>
 
       {children}

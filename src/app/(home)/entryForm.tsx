@@ -88,13 +88,18 @@ const EntryForm = () => {
             placeholder="AAA-0000"
             uppercaseInput
             error={formErrors.plate?.message}
+            data-testid="input_entry_plate"
             {...register("plate")}
           />
 
           {formErrors.plate && <Error text={formErrors.plate.message} />}
         </Form.Field>
 
-        <Button type="submit" disabled={!watch("plate") || isSubmitting}>
+        <Button
+          type="submit"
+          disabled={!watch("plate") || isSubmitting}
+          data-testid="submit_entry-plate"
+        >
           Confirmar entrada
         </Button>
       </Form.State>

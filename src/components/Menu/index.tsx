@@ -11,14 +11,17 @@ import Link from "next/link";
 export default function Menu() {
   return (
     <Dialog.Root>
-      <Dialog.Trigger>
+      <Dialog.Trigger data-testid="btn_menu">
         <MenuIcon className="text-white" size={36} />
       </Dialog.Trigger>
 
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50" />
 
-        <Dialog.Content className="animate-fromRight fixed right-0 top-0 flex h-full w-full max-w-96 flex-col gap-8 bg-cyan200 p-8">
+        <Dialog.Content
+          className="fixed right-0 top-0 flex h-full w-full max-w-96 animate-fromRight flex-col gap-8 bg-cyan200 p-8"
+          data-testid="dialog_menu"
+        >
           <div className="mb-8 flex items-center justify-between">
             <Image
               src={LogoImg}
@@ -34,13 +37,13 @@ export default function Menu() {
             </Dialog.Close>
           </div>
 
-          <Dialog.Close asChild>
+          <Dialog.Close asChild data-testid="dialog_menu_entry">
             <Link href="/?tab=entry" className="text-white">
               Entrada
             </Link>
           </Dialog.Close>
 
-          <Dialog.Close asChild>
+          <Dialog.Close asChild data-testid="dialog_menu_exit">
             <Link href="/?tab=exit" className="text-white">
               Saída
             </Link>

@@ -10,5 +10,9 @@ export default function HomeTab({
   children: React.ReactNode;
   value: string;
 }) {
-  return <Tabs.Content value={value}>{children}</Tabs.Content>;
+  return (
+    <Tabs.Content value={value} data-testid={`home_${value}_tab`}>
+      {children}
+    </Tabs.Content>
+  );
 }

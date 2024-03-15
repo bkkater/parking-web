@@ -27,6 +27,7 @@ export default function Card({ item }: CardProps) {
     <div
       className="grid cursor-pointer grid-cols-2 grid-rows-2 rounded-md border border-gray300 p-4 shadow"
       onClick={handleItemClick}
+      data-testid="history_card"
     >
       <Label>Tempo atual</Label>
       <Label>Pagamento</Label>

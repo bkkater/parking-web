@@ -116,6 +116,8 @@ const ExitForm = () => {
     const plate = getValues("plate");
     const validationResult = carSchema.safeParse({ plate });
 
+    setLoadingHistory(false);
+
     if (validationResult.success) {
       router.push(`/history/${plate}`);
     } else {
@@ -163,6 +165,7 @@ const ExitForm = () => {
           placeholder="AAA-0000"
           error={formErrors.plate?.message}
           uppercaseInput
+          data-testid="input_exit_plate"
           {...register("plate")}
         />
 
@@ -196,6 +199,7 @@ const ExitForm = () => {
         onClick={handleHistoryClick}
         disabled={shouldDisableTrigger}
         className="mx-auto mt-3 font-semibold uppercase text-cyan200 transition-colors hover:text-cyan300 disabled:text-gray700"
+        data-testid="link_history"
       >
         {loadingHistory ? (
           <Notification type="loading" text="Carregando" size={22} />
